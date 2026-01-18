@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: my-blog-app-final
+    runtime: php # ここでPHPを強制指定します
+    plan: free
+    buildCommand: composer install
+    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: database/database.sqlite
+      - key: APP_KEY
+        value: base64:dLio5Vy1a2mCAdod7jCNX7T/DtWBB2oFv2KCbUsL01U=
+      - key: APP_DEBUG
+        value: "true"
