@@ -1,6 +1,4 @@
-FROM richarvey/php-apache-heroku:latest
+FROM richarvey/php-apache-heroku:1.10.3
 COPY . /var/www/html
 ENV WEBROOT /var/www/html/public
-# あなたのAPP_KEYを直接入れます
-ENV APP_KEY base64:dLio5Vy1a2mCAdod7jCNX7T/DtWBB2oFv2KCbUsL01U=
 RUN composer install --no-dev --optimize-autoloader
