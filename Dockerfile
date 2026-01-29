@@ -14,12 +14,6 @@ COPY . /var/www/html
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
 
-# --- ここが重要 ---
-# 空のデータベースファイルを作成し、テーブルを構築します
-RUN touch database/database.sqlite
-RUN php artisan migrate --force
-# ------------------
-
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 80
