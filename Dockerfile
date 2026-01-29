@@ -30,3 +30,6 @@ RUN mkdir -p database && touch database/database.sqlite && chmod 777 database/da
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 
 EXPOSE 80
+
+# 起動時に自動で migrate を実行するようにスクリプトを仕込む
+ENTRYPOINT ["/bin/sh", "-c", "php artisan migrate --force && apache2-foreground"]
