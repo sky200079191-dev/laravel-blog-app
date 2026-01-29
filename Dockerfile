@@ -35,4 +35,4 @@ EXPOSE 80
 EXPOSE 80
 
 # 起動時にマイグレーションを実行してからApacheを起動する設定
-CMD php artisan migrate --force && apache2-foreground
+CMD ["/bin/sh", "-c", "touch database/database.sqlite && chmod 666 database/database.sqlite && php artisan migrate --force && apache2-foreground"]
