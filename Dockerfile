@@ -32,4 +32,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 EXPOSE 80
 
 # 起動時に自動で migrate を実行するようにスクリプトを仕込む
-ENTRYPOINT ["/bin/sh", "-c", "php artisan migrate --force && apache2-foreground"]
+EXPOSE 80
+
+# 起動時にマイグレーションを実行してからApacheを起動する設定
+CMD php artisan migrate --force && apache2-foreground
