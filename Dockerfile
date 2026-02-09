@@ -1,12 +1,13 @@
 FROM php:8.4-apache
 
-# 必要なライブラリとNode.jsのインストール
+# 1. 必要なライブラリとNode.js、PostgreSQL用ドライバのインストール
 RUN apt-get update && apt-get install -y \
     libpng-dev zlib1g-dev libxml2-dev libzip-dev zip unzip \
+    libpq-dev \
     curl \
     && curl -sL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
-    && docker-php-ext-install pdo_mysql gd bcmath zip
+    && docker-php-ext-install pdo_pgsql gd bcmath zip
 
 # Apacheの設定
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
@@ -25,14 +26,10 @@ RUN composer install --no-dev --optimize-autoloader
 # npm（デザイン関連）のビルド
 RUN npm install && npm run build
 
-# データベースファイルの土台作成と権限付与
-RUN mkdir -p database && touch database/database.sqlite && chmod 777 database/database.sqlite
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+# 権限付与（SQLite関連の記述を削除しました）
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 80
 
-# 起動時に自動で migrate を実行するようにスクリプトを仕込む
-EXPOSE 80
-
-# 起動時にマイグレーションを実行してからApacheを起動する設定
-CMD ["/bin/sh", "-c", "touch database/database.sqlite && chmod 666 database/database.sqlite && php artisan migrate --force && apache2-foreground"]
+# 2. 起動設定（SQLiteのファイル作成処理を削除しました）
+CMD ["/bin/sh", "-c", "php artisan migrate --force && apache2-foreground"]
