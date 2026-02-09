@@ -3,6 +3,7 @@
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LikeController;
 
 // --- 誰でも見れるページ ---
 Route::get('/posts', [PostController::class, 'indexView']);
@@ -24,5 +25,8 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// good機能用のルート
+Route::post('/posts/{post}/like', [LikeController::class, 'store'])->name('posts.like');
 
 require __DIR__.'/auth.php';
