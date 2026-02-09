@@ -57,10 +57,29 @@
                         </div>
                     </div>
                     
-                    <p class="text-slate-600 leading-relaxed mb-6 break-all whitespace-pre-wrap">{{ $post->content }}</p>
+                <p class="text-slate-600 leading-relaxed mb-6 break-all whitespace-pre-wrap">{{ $post->content }}</p>
+
+                <div class="flex justify-between items-center border-t border-slate-50 pt-4">
+                    <div class="flex gap-2">
+                        <form action="{{ route('posts.like', $post) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="is_good" value="1">
+                            <button type="submit" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-blue-100 bg-white text-blue-600 hover:bg-blue-50 transition text-sm font-medium shadow-sm">
+                                👍 {{ $post->likes()->where('is_good', true)->count() }}
+                            </button>
+                        </form>
+
+                        <form action="{{ route('posts.like', $post) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="is_good" value="0">
+                            <button type="submit" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-rose-100 bg-white text-rose-500 hover:bg-rose-50 transition text-sm font-medium shadow-sm">
+                                👎 {{ $post->likes()->where('is_good', false)->count() }}
+                            </button>
+                        </form>
+                    </div>
 
                     @if($post->user_id === Auth::id())
-                        <div class="flex justify-end gap-3 border-t border-slate-50 pt-4">
+                        <div class="flex gap-3">
                             <a href="/posts/{{ $post->id }}/edit" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold px-3 py-1 rounded-md hover:bg-indigo-50 transition">編集</a>
                             <form action="/posts/{{ $post->id }}" method="POST" onsubmit="return confirm('本当に削除しますか？');">
                                 @csrf @method('DELETE')
@@ -68,23 +87,6 @@
                             </form>
                         </div>
                     @endif
-                </div>
-                <div class="mt-2">
-                    <form action="{{ route('posts.like', $post) }}" method="POST" style="display: inline;">
-                        @csrf
-                        <input type="hidden" name="is_good" value="1">
-                        <button type="submit" class="btn btn-sm btn-outline-primary">
-                            👍 {{ $post->likes()->where('is_good', true)->count() }}
-                        </button>
-                    </form>
-
-                    <form action="{{ route('posts.like', $post) }}" method="POST" style="display: inline;">
-                        @csrf
-                        <input type="hidden" name="is_good" value="0">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                            👎 {{ $post->likes()->where('is_good', false)->count() }}
-                        </button>
-                    </form>
                 </div>
             @endforeach
             <div class='mt-8 px-4'>
