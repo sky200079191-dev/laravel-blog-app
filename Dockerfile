@@ -1,6 +1,6 @@
 FROM php:8.4-apache
 
-# libpq-dev を追加し、pdo_pgsql をインストール
+# 1. 必要なライブラリとNode.js、PostgreSQL用ドライバのインストール
 RUN apt-get update && apt-get install -y \
     libpng-dev zlib1g-dev libxml2-dev libzip-dev zip unzip \
     libpq-dev \
@@ -17,12 +17,19 @@ RUN a2enmod rewrite
 
 # ファイルのコピー
 COPY . /var/www/html
+WORKDIR /var/www/html
 
-# Composerの実行
+# Composer（PHPライブラリ）のインストール
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
 
-# 権限の付与（storageとcacheを書き込み可能にする）
+# npm（デザイン関連）のビルド
+RUN npm install && npm run build
+
+# 権限付与（SQLite関連の記述を削除しました）
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 80
+
+# 2. 起動設定（SQLiteのファイル作成処理を削除しました）
+CMD ["/bin/sh", "-c", "php artisan migrate --force && apache2-foreground"]
