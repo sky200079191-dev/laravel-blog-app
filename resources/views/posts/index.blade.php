@@ -2,13 +2,13 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>konchanブログ</title>
+    <title>練習ブログ</title>
     <script src="https://cdn.tailwindcss.com"></script> 
 </head>
 <body class="bg-gray-100 p-10">
     <nav class="bg-blue-50/80 shadow mb-8">
         <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="/posts" class="font-bold text-lg text-blue-600">konchanブログ</a>
+            <a href="/posts" class="font-bold text-lg text-blue-600">練習ブログ</a>
             
             <div class="flex items-center space-x-4">
                 @auth

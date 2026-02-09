@@ -1,9 +1,13 @@
 FROM php:8.4-apache
 
-# 必要なライブラリとPHP拡張のインストール
+# libpq-dev を追加し、pdo_pgsql をインストール
 RUN apt-get update && apt-get install -y \
     libpng-dev zlib1g-dev libxml2-dev libzip-dev zip unzip \
-    && docker-php-ext-install pdo_mysql gd bcmath zip
+    libpq-dev \
+    curl \
+    && curl -sL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && docker-php-ext-install pdo_pgsql gd bcmath zip
 
 # Apacheの設定
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
