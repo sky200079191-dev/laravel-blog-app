@@ -10,7 +10,7 @@ class Like extends Model
     use HasFactory;
 
     // DBに保存を許可する項目
-    protected $fillable = ['user_id', 'post_id', 'is_good'];
+    protected $fillable = ['user_id', 'post_id', 'comment_id', 'is_good'];
 
     // どの記事へのいいねか
     public function post()
@@ -22,5 +22,11 @@ class Like extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // コメント返信機能
+    public function comment()
+    {
+        return $this->belongsTo(Comment::class);
     }
 }

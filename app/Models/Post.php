@@ -24,4 +24,10 @@ class Post extends Model
     {
         return $this->hasMany(Like::class);
     }
+
+    // 記事にコメント返信機能を追加
+    public function comments() 
+    { 
+        return $this->hasMany(Comment::class);
+    }
 }

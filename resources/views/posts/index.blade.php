@@ -71,23 +71,66 @@
                     {{-- 記事本文 --}}
                     <p class="text-slate-600 leading-relaxed mb-6 break-all whitespace-pre-wrap">{{ $post->content }}</p>
 
-                    {{-- アクションエリア（Good/Bad & 編集/削除） --}}
-                    <div class="flex justify-between items-center border-t border-blue-100/50 pt-4">
-                        {{-- 左側：リアクションボタン --}}
-                        <div class="flex gap-2">
-                            <form action="{{ route('posts.like', $post) }}" method="POST">
+                    {{-- --- 返信（コメント）セクション --- --}}
+                    <div class="mb-6">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 ml-6"></h3>
+                        
+                        {{-- 返信一覧（スクロール可能） --}}
+                        <div class="space-y-3 overflow-y-auto max-h-64 px-2 mb-4" style="scrollbar-width: thin;">
+                            @forelse($post->comments as $comment)
+                                <div class="bg-white/60 border border-blue-100 rounded-lg p-3 ml-6 shadow-sm">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-xs font-bold text-blue-600">{{ $comment->user->name }}</span>
+                                        <span class="text-[10px] text-slate-400">{{ $comment->created_at->format('m/d H:i') }}</span>
+                                    </div>
+                                    <p class="text-sm text-slate-700 mb-3">{{ $comment->content }}</p>
+                                    
+                                    {{-- 返信用Good/Badボタン --}}
+                                    <div class="flex gap-2">
+                                        <form action="{{ route('comments.like', $comment) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" name="is_good" value="1" class="text-[10px] flex items-center gap-1 px-2 py-1 rounded border bg-white hover:bg-blue-50 text-blue-600 transition">
+                                                👍 {{ $comment->likes()->where('is_good', true)->count() }}
+                                            </button>
+                                        </form>
+                                        <form action="{{ route('comments.like', $comment) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" name="is_good" value="0" class="text-[10px] flex items-center gap-1 px-2 py-1 rounded border bg-white hover:bg-rose-50 text-rose-500 transition">
+                                                👎 {{ $comment->likes()->where('is_good', false)->count() }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="text-xs text-slate-400 ml-8 italic">返信はまだありません</p>
+                            @endforelse
+                        </div>
+
+                        {{-- 返信投稿フォーム --}}
+                        @auth
+                            <form action="{{ route('posts.comments.store', $post) }}" method="POST" class="ml-6 flex gap-2">
                                 @csrf
-                                <input type="hidden" name="is_good" value="1">
-                                <button type="submit" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-blue-100 bg-white text-blue-600 hover:bg-blue-50 transition text-sm font-medium shadow-sm">
-                                    👍 {{ $post->likes()->where('is_good', true)->count() }}
+                                <input type="text" name="content" placeholder="返信を書く..." class="flex-1 text-sm border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition" required>
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded-lg text-sm font-bold hover:bg-blue-600 transition shadow-sm">送信</button>
+                            </form>
+                        @endauth
+                    </div>
+
+                    {{-- 記事本体のアクションエリア（Good/Bad & 編集/削除） --}}
+                    <div class="flex justify-between items-center border-t border-blue-100/50 pt-4">
+                        {{-- 左側：記事へのリアクションボタン --}}
+                        <div class="flex gap-2">
+                            <form action="{{ route('comments.like', $comment) }}" method="POST">
+                                @csrf
+                                {{-- comment_id の指定は不要で、単純にそのコメントに紐づく Good をカウントする --}}
+                                <button type="submit" name="is_good" value="1" class="text-[10px] flex items-center gap-1 px-2 py-1 rounded border bg-white hover:bg-blue-50 text-blue-600 transition">
+                                    👍 {{ $comment->likes()->where('is_good', true)->count() }}
                                 </button>
                             </form>
-
-                            <form action="{{ route('posts.like', $post) }}" method="POST">
+                            <form action="{{ route('comments.like', $comment) }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="is_good" value="0">
-                                <button type="submit" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-rose-100 bg-white text-rose-500 hover:bg-rose-50 transition text-sm font-medium shadow-sm">
-                                    👎 {{ $post->likes()->where('is_good', false)->count() }}
+                                <button type="submit" name="is_good" value="0" class="text-[10px] flex items-center gap-1 px-2 py-1 rounded border bg-white hover:bg-rose-50 text-rose-500 transition">
+                                    👎 {{ $comment->likes()->where('is_good', false)->count() }}
                                 </button>
                             </form>
                         </div>
