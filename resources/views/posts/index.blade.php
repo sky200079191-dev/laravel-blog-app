@@ -62,8 +62,6 @@
 
                     {{-- --- 返信（コメント）セクション --- --}}
                     <div class="mb-6">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 ml-6">Replies</h3>
-                        
                         <div class="space-y-3 overflow-y-auto max-h-64 px-2 mb-4" style="scrollbar-width: thin;">
                             @forelse($post->comments as $comment)
                                 <div class="bg-white/60 border border-blue-100 rounded-lg p-3 ml-6 shadow-sm">
