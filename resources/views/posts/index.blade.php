@@ -124,13 +124,13 @@
                                 @csrf
                                 {{-- comment_id の指定は不要で、単純にそのコメントに紐づく Good をカウントする --}}
                                 <button type="submit" name="is_good" value="1" class="text-[10px] flex items-center gap-1 px-2 py-1 rounded border bg-white hover:bg-blue-50 text-blue-600 transition">
-                                    👍 {{ $comment->likes()->where('is_good', true)->count() }}
+                                    👍 {{ $post->likes()->where('comment_id', null)->where('is_good', true)->count() }}
                                 </button>
                             </form>
                             <form action="{{ route('posts.like', $post) }}" method="POST">
                                 @csrf
                                 <button type="submit" name="is_good" value="0" class="text-[10px] flex items-center gap-1 px-2 py-1 rounded border bg-white hover:bg-rose-50 text-rose-500 transition">
-                                    👎 {{ $comment->likes()->where('is_good', false)->count() }}
+                                    👎 {{ $post->likes()->where('comment_id', null)->where('is_good', false)->count() }}
                                 </button>
                             </form>
                         </div>
