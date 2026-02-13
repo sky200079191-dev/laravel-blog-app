@@ -45,4 +45,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // 管理者のメールアドレスを指定
+    public function isAdmin(): bool
+    {
+        return $this->email === 'admin@admin';
+    }
 }

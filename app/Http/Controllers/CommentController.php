@@ -52,4 +52,14 @@ class CommentController extends Controller
 
         return back();
     }
+
+    // 管理者権限で返信文を削除する
+    public function destroy(Comment $comment)
+    {
+        if ($comment->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
+            abort(403);
+        }
+        $comment->delete();
+        return back();
+    }
 }

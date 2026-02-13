@@ -39,6 +39,11 @@ class PostController extends Controller
             'content' => 'required',
         ]);
 
+        // 本人ではない、かつ、管理者でもない場合は拒否
+        if ($post->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
+            abort(403, '権限がありません。');
+        }
+
         // 2. データを上書き保存
          $post->update($validated);
 
@@ -49,11 +54,13 @@ class PostController extends Controller
     // 特定の記事を削除する
     public function destroy(Post $post)
     {
-        // データベースから削除
-        $post->delete();
+        // 本人ではない、かつ、管理者でもない場合は拒否
+        if ($post->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
+            abort(403, '権限がありません。');
+        }
 
-        // 「中身はないけど成功したよ（204 No Content）」と返却
-        return response()->json(null, 204);
+        $post->delete();
+        return redirect()->route('posts.index');
     }
 
     // APIではなくて画面でも表示する用
@@ -93,6 +100,11 @@ class PostController extends Controller
     // 編集画面を表示
     public function editView(Post $post)
     {
+        // 「本人ではない」かつ「管理者でもない」なら拒否
+        if ($post->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
+            abort(403, '権限がありません。');
+        }
+
         return view('posts.edit', ['post' => $post]);
     }
 
@@ -100,7 +112,7 @@ class PostController extends Controller
     public function updateView(Request $request, Post $post)
     {
         // 本人確認：記事の所有者とログイン中のユーザーが一致するか
-        if ($post->user_id !== Auth::id()) {
+        if ($post->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, '自分の記事以外は編集できません。');
         }
 
@@ -116,7 +128,7 @@ class PostController extends Controller
     public function destroyView(Post $post)
     {
         // 本人確認
-        if ($post->user_id !== Auth::id()) {
+        if ($post->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
             abort(403, '自分の記事以外は削除できません。');
         }
 

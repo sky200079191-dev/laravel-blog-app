@@ -39,6 +39,9 @@ Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name
 // 返信へのGood/Bad
 Route::post('/comments/{comment}/like', [CommentController::class, 'like'])->name('comments.like')->middleware('auth');
 
+// 管理者権限
+Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy')->middleware('auth');
+
 // // ローカル環境だけで使う緊急用ルート
 // Route::get('/migrate-debug', function () {
 //     try {
